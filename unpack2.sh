@@ -5,12 +5,11 @@ mkdir .home
 dir=`ls .home`
 rec(){
     echo " this is $1"
-case "$1" in 
-    *.gz*) find . -name '*.gz' -execdir gzip -d '{}' ';';;
-    *.zip*) find . -name '*.zip' -execdir unzip '{}' ';';;
-    *.bzip2*) find . -name '*.bzip2' -execdir bzip2 '{}' ';';;
-    *.cmpr*) find . -name '*.cmpr' -execdir  uncompress '{}' ';';;
-esac
+     find . -name '*.gz' | while read filename; do -execdir gzip -d $1 echo "$filename"'{}' ';'
+     find . -name '*.zip' -execdir unzip $1'{}' ';'
+     find . -name '*.bzip2' -execdir bzip2 $1'{}' ';'
+     find . -name '*.cmpr' -execdir  uncompress $1'{}' ';'
+
 }
 
 
@@ -33,6 +32,7 @@ do
     echo "$@"
     type=$(file -i $argument);
     echo "$type"
+
     case "$type" in 
         *application/x-bzip2*)  bzip2 -d "$argument"
                                 if [ "$verbose" = true ]; 
@@ -40,7 +40,7 @@ do
                                 echo "Unpacking:" "$argument" ;
                                 fi
                                 if [ "$recursive" = true ];
-                                then  rec "$dir";
+                                then  rec "$dir" ;
                                 fi  ;;
         *application/zip*)      unzip  -d .home/ "$argument" 
                                 if [ "$verbose" = true ]; 
